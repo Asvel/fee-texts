@@ -108,7 +108,7 @@ foreach (var lang in langs)
                                 txt.Append(personIdToTextId[Encoding.Unicode.GetString(parameters[2..])]);
                                 txt.Append('\u000e');
                             }
-                            if (type1 != 2 && type1 != 3 && type1 != 4 && type1 != 5 &&
+                            else if (type1 != 2 && type1 != 3 && type1 != 4 && type1 != 5 &&
                                 type1 != 7 && type1 != 11 && !(type1 == 6 && type2 == 0))
                             {
                                 txt.Append('{');
@@ -121,6 +121,10 @@ foreach (var lang in langs)
                                     txt.Append(parameterSize);
                                 }
                                 txt.Append('}');
+                            }
+                            else if (txt.Length > 0 && txt[^1] == '\n' && reader.PeekChar() == '\n')
+                            {
+                                reader.ReadChar();
                             }
                         }
                         else

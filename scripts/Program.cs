@@ -6,7 +6,7 @@ using YamlDotNet.Serialization.EventEmitters;
 using YamlDotNet.Serialization;
 
 var dataPath = args[0];
-var langs = new string[] { "jpja", "cnch", "usen" };
+var langs = new[] { "jpja", "cnch", "usen" };
 
 var personIdToTextId = new Dictionary<string, string>();  // eg. リュール => MPID_Lueur, マルス => MGID_Marth
 foreach (var (file, keyField, valueField) in new[] { ("person", "Pid", "Name"), ("god", "Gid", "Mid") })
@@ -51,7 +51,7 @@ foreach (var lang in langs)
         var stream = new MemoryStream(msbtData);
         var reader = new BinaryReader(stream, Encoding.Unicode);
         if (reader.ReadUInt64() != 0x6e4264745367734d/*MsgStdBn*/) throw new InvalidDataException();
-        if (reader.ReadUInt16() != 0xFEFF) throw new InvalidDataException();
+        if (reader.ReadUInt16() != 0xfeff) throw new InvalidDataException();
         stream.Position += 2;
         if (reader.ReadByte() != 1) throw new InvalidDataException();
         if (reader.ReadByte() != 3) throw new InvalidDataException();
@@ -104,6 +104,7 @@ foreach (var lang in langs)
                             if (type1 == 3 && type2 == 2)  // speaker
                             {
                                 if (BitConverter.ToUInt16(parameters) != parameters.Length - 2) throw new InvalidDataException();
+                                // name texts haven't been parsed now, yield a marker and replace it later
                                 txt.Append('\u000e');
                                 txt.Append(personIdToTextId[Encoding.Unicode.GetString(parameters[2..])]);
                                 txt.Append('\u000e');
